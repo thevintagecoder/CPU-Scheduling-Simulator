@@ -8,28 +8,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Shortest Job First scheduling, non-preemptive.
+ * Priority Scheduling, non-preemptive.
  *
- * Among all processes that have already arrived,
- * the process with the smallest burst time is selected.
+ * A smaller priority number means a higher priority.
+ *
+ * Priority 1 is higher than Priority 2.
  */
-public class SjfScheduler implements Scheduler {
+public class PriorityScheduler implements Scheduler {
 
     @Override
-    public ScheduleResult schedule(List<CpuProcess> processes) {
-
+    public ScheduleResult schedule(
+            List<CpuProcess> processes
+    ) {
         validateInput(processes);
 
-        /*
-         * Copy the input processes so the scheduler does not modify
-         * the original objects supplied by the caller.
-         */
         ArrayList<CpuProcess> resultProcesses =
                 copyProcesses(processes);
 
-        /*
-         * This list contains processes that have not yet completed.
-         */
         ArrayList<CpuProcess> remainingProcesses =
                 new ArrayList<>(resultProcesses);
 
@@ -38,32 +33,25 @@ public class SjfScheduler implements Scheduler {
 
         int currentTime = 0;
 
-        /*
-         * Continue until every process has been selected and completed.
-         */
         while (!remainingProcesses.isEmpty()) {
 
             CpuProcess selectedProcess = null;
 
-            /*
-             * Search for the shortest process that has already arrived.
-             */
-            for (CpuProcess candidate : remainingProcesses) {
+            for (CpuProcess candidate
+                    : remainingProcesses) {
 
-                if (candidate.getArrivalTime() <= currentTime) {
+                if (candidate.getArrivalTime()
+                        <= currentTime) {
 
                     /*
-                     * Select the candidate when:
-                     *
-                     * 1. No process has been selected yet, or
-                     * 2. Candidate has a shorter burst time, or
-                     * 3. Burst times are equal but candidate arrived earlier.
+                     * A smaller number represents
+                     * a higher priority.
                      */
                     if (selectedProcess == null
-                            || candidate.getBurstTime()
-                            < selectedProcess.getBurstTime()
-                            || (candidate.getBurstTime()
-                            == selectedProcess.getBurstTime()
+                            || candidate.getPriority()
+                            < selectedProcess.getPriority()
+                            || (candidate.getPriority()
+                            == selectedProcess.getPriority()
                             && candidate.getArrivalTime()
                             < selectedProcess.getArrivalTime())) {
 
@@ -73,13 +61,14 @@ public class SjfScheduler implements Scheduler {
             }
 
             /*
-             * selectedProcess remains null when no process has arrived yet.
-             * In that case, the CPU must remain idle.
+             * No process has arrived yet.
              */
             if (selectedProcess == null) {
 
                 int nextArrivalTime =
-                        findNextArrivalTime(remainingProcesses);
+                        findNextArrivalTime(
+                                remainingProcesses
+                        );
 
                 if (currentTime < nextArrivalTime) {
                     ganttBlocks.add(
@@ -98,7 +87,8 @@ public class SjfScheduler implements Scheduler {
             int startTime = currentTime;
 
             int completionTime =
-                    startTime + selectedProcess.getBurstTime();
+                    startTime
+                            + selectedProcess.getBurstTime();
 
             int turnaroundTime =
                     completionTime
@@ -109,8 +99,12 @@ public class SjfScheduler implements Scheduler {
                             - selectedProcess.getBurstTime();
 
             selectedProcess.setStartTime(startTime);
-            selectedProcess.setCompletionTime(completionTime);
-            selectedProcess.setTurnaroundTime(turnaroundTime);
+            selectedProcess.setCompletionTime(
+                    completionTime
+            );
+            selectedProcess.setTurnaroundTime(
+                    turnaroundTime
+            );
             selectedProcess.setWaitingTime(waitingTime);
             selectedProcess.setRemainingTime(0);
 
@@ -124,19 +118,22 @@ public class SjfScheduler implements Scheduler {
 
             currentTime = completionTime;
 
-            /*
-             * The selected process has finished, so remove it.
-             */
-            remainingProcesses.remove(selectedProcess);
+            remainingProcesses.remove(
+                    selectedProcess
+            );
         }
 
-        return buildResult(resultProcesses, ganttBlocks);
+        return buildResult(
+                resultProcesses,
+                ganttBlocks
+        );
     }
 
     private int findNextArrivalTime(
             List<CpuProcess> processes
     ) {
-        int nextArrivalTime = Integer.MAX_VALUE;
+        int nextArrivalTime =
+                Integer.MAX_VALUE;
 
         for (CpuProcess process : processes) {
             nextArrivalTime = Math.min(
@@ -179,22 +176,18 @@ public class SjfScheduler implements Scheduler {
         double totalTurnaroundTime = 0;
 
         for (CpuProcess process : processes) {
-            totalWaitingTime += process.getWaitingTime();
+            totalWaitingTime +=
+                    process.getWaitingTime();
+
             totalTurnaroundTime +=
                     process.getTurnaroundTime();
         }
 
-        double averageWaitingTime =
-                totalWaitingTime / processes.size();
-
-        double averageTurnaroundTime =
-                totalTurnaroundTime / processes.size();
-
         return new ScheduleResult(
                 processes,
                 ganttBlocks,
-                averageWaitingTime,
-                averageTurnaroundTime
+                totalWaitingTime / processes.size(),
+                totalTurnaroundTime / processes.size()
         );
     }
 }
