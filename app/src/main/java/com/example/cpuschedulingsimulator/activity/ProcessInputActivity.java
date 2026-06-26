@@ -1,5 +1,6 @@
 package com.example.cpuschedulingsimulator.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,15 +22,20 @@ import com.example.cpuschedulingsimulator.scheduler.Scheduler;
 import com.example.cpuschedulingsimulator.scheduler.SjfScheduler;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Collects process information from the user.
  *
- * This Activity converts the entered values into CpuProcess objects
- * and sends them to the selected scheduling algorithm.
+ * This Activity converts the entered values into CpuProcess objects,
+ * sends them to the selected scheduler, and opens the result screen.
  */
 public class ProcessInputActivity extends AppCompatActivity {
+
+    /**
+     * Intent key used to send ScheduleResult to ResultActivity.
+     */
+    public static final String EXTRA_RESULT =
+            "com.example.cpuschedulingsimulator.EXTRA_RESULT";
 
     private String selectedAlgorithm;
 
@@ -73,6 +79,9 @@ public class ProcessInputActivity extends AppCompatActivity {
         Button buttonCalculate =
                 findViewById(R.id.buttonCalculate);
 
+        /*
+         * Read the algorithm selected in MainActivity.
+         */
         selectedAlgorithm = getIntent().getStringExtra(
                 MainActivity.EXTRA_ALGORITHM
         );
@@ -182,7 +191,8 @@ public class ProcessInputActivity extends AppCompatActivity {
 
     /**
      * Reads the fields, creates CpuProcess objects,
-     * selects the scheduler, and runs the calculation.
+     * selects the scheduler, runs the calculation,
+     * and opens ResultActivity.
      */
     private void calculateSchedule() {
 
@@ -248,27 +258,38 @@ public class ProcessInputActivity extends AppCompatActivity {
         try {
 
             /*
-             * This line connects the Android UI to your backend.
+             * This line sends the entered processes
+             * to your tested scheduling backend.
              */
             ScheduleResult result =
                     scheduler.schedule(processes);
 
             /*
-             * Temporary display.
-             * The next screen will display the full table and Gantt chart.
+             * Open the result screen.
              */
-            String message = String.format(
-                    Locale.US,
-                    "Calculated successfully!\nAverage WT: %.2f\nAverage TAT: %.2f",
-                    result.getAverageWaitingTime(),
-                    result.getAverageTurnaroundTime()
+            Intent intent = new Intent(
+                    ProcessInputActivity.this,
+                    ResultActivity.class
             );
 
-            Toast.makeText(
-                    this,
-                    message,
-                    Toast.LENGTH_LONG
-            ).show();
+            /*
+             * Send the selected algorithm so ResultActivity
+             * knows which algorithm produced the result.
+             */
+            intent.putExtra(
+                    MainActivity.EXTRA_ALGORITHM,
+                    selectedAlgorithm
+            );
+
+            /*
+             * Send the complete ScheduleResult.
+             */
+            intent.putExtra(
+                    EXTRA_RESULT,
+                    result
+            );
+
+            startActivity(intent);
 
         } catch (IllegalArgumentException exception) {
 
@@ -377,7 +398,10 @@ public class ProcessInputActivity extends AppCompatActivity {
                 input.getText().toString().trim();
 
         if (text.isEmpty()) {
-            input.setError(fieldName + " is required.");
+            input.setError(
+                    fieldName + " is required."
+            );
+
             input.requestFocus();
             return null;
         }
@@ -421,7 +445,10 @@ public class ProcessInputActivity extends AppCompatActivity {
                 input.getText().toString().trim();
 
         if (text.isEmpty()) {
-            input.setError(fieldName + " is required.");
+            input.setError(
+                    fieldName + " is required."
+            );
+
             input.requestFocus();
             return null;
         }
@@ -454,6 +481,9 @@ public class ProcessInputActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Converts the internal algorithm key into a readable screen title.
+     */
     private String getReadableAlgorithmName(
             String algorithm
     ) {

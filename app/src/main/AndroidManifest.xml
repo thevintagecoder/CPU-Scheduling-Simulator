@@ -12,6 +12,11 @@
         android:theme="@style/Theme.CPUSchedulingSimulator">
 
         <activity
+            android:name=".activity.ResultActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".activity.ProcessInputActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
