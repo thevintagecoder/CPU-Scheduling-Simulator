@@ -18,6 +18,8 @@ public class GanttBlock implements Serializable {
     private final int startTime;
     private final int endTime;
 
+    //the fields here are final because once created the time cannot change
+
     public GanttBlock(String processId, int startTime, int endTime) {
         this.processId = processId;
         this.startTime = startTime;
@@ -36,6 +38,11 @@ public class GanttBlock implements Serializable {
         return endTime;
     }
 
+
+    /**
+     * Calculates the length of this block.
+     * Duration is derived instead of stored separately.
+     */
     public int getDuration() {
         return endTime - startTime;
     }

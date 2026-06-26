@@ -11,11 +11,21 @@ public class ScheduleResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    // Stores the complete output of one scheduling run.
+    // The process list contains calculated process values.
+    // The Gantt list contains the execution timeline.
     private final ArrayList<CpuProcess> processes;
     private final ArrayList<GanttBlock> ganttBlocks;
     private final double averageWaitingTime;
     private final double averageTurnaroundTime;
 
+    /**
+     * Creates the final scheduling result.
+     * New list objects are created so the result does not directly store
+     * the scheduler's original list containers.
+     *
+     * The CpuProcess and GanttBlock elements themselves are not copied here.
+     */
     public ScheduleResult(
             List<CpuProcess> processes,
             List<GanttBlock> ganttBlocks,
