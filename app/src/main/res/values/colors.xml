@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Theme tokens — LIGHT (default). Dark overrides live in values-night/. -->
+    <color name="col_bg">#eef2f8</color>
+    <color name="col_surface">#ffffff</color>
+    <color name="col_surface2">#f3f6fb</color>
+    <color name="col_border">#dde5f0</color>
+    <color name="col_text">#0f1b2e</color>
+    <color name="col_muted">#5d6e88</color>
+    <color name="col_primary">#22d3ee</color>
+    <color name="col_on_primary">#06141a</color>
+    <color name="col_glow">#1A0891B2</color>
+    <color name="col_fog">#B3EEF2F8</color>
+
+    <!-- Theme-invariant accents -->
+    <color name="pro">#34d399</color>
+    <color name="con">#fb7185</color>
+
+    <!-- Process palette: processColor(id) = palette[(id-1) % 8] -->
+    <color name="proc_0">#f472b6</color>
+    <color name="proc_1">#fbbf24</color>
+    <color name="proc_2">#a78bfa</color>
+    <color name="proc_3">#34d399</color>
+    <color name="proc_4">#60a5fa</color>
+    <color name="proc_5">#fb7185</color>
+    <color name="proc_6">#2dd4bf</color>
+    <color name="proc_7">#facc15</color>
 </resources>

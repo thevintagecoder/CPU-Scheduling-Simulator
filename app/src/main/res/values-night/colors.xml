@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme tokens — DARK (the app's default appearance). -->
+    <color name="col_bg">#0a0e16</color>
+    <color name="col_surface">#121a26</color>
+    <color name="col_surface2">#1a2433</color>
+    <color name="col_border">#27344a</color>
+    <color name="col_text">#e8eef6</color>
+    <color name="col_muted">#8a9ab2</color>
+    <color name="col_primary">#22d3ee</color>
+    <color name="col_on_primary">#06141a</color>
+    <color name="col_glow">#2E22D3EE</color>
+    <color name="col_fog">#B30A0E16</color>
+</resources>
