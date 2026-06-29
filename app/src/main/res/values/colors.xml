@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+
+    <!-- Main application colors -->
+    <color name="app_background">#0A0E16</color>
+    <color name="card_background">#121A26</color>
+    <color name="input_background">#1A2433</color>
+    <color name="border_color">#27344A</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#E8EEF6</color>
+    <color name="text_secondary">#8A9AB2</color>
+
+    <!-- Main accent color from your teammate's theme -->
+    <color name="accent_cyan">#22D3EE</color>
+    <color name="accent_text">#06141A</color>
+
+    <!-- Process colors for the Gantt chart -->
+    <color name="process_1">#F472B6</color>
+    <color name="process_2">#FBBF24</color>
+    <color name="process_3">#A78BFA</color>
+    <color name="process_4">#34D399</color>
+    <color name="process_5">#60A5FA</color>
+    <color name="process_6">#FB7185</color>
+    <color name="process_7">#2DD4BF</color>
+    <color name="process_8">#FACC15</color>
+
     <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
 </resources>
