@@ -1,9 +1,11 @@
 package com.example.cpuschedulingsimulator.scheduler;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
 
 import com.example.cpuschedulingsimulator.model.CpuProcess;
+import com.example.cpuschedulingsimulator.model.GanttBlock;
 import com.example.cpuschedulingsimulator.model.ScheduleResult;
 
 import org.junit.Test;
@@ -13,114 +15,155 @@ import java.util.List;
 
 public class FcfsSchedulerTest {
 
+    private final FcfsScheduler scheduler = new FcfsScheduler();
+
     @Test
     public void schedule_calculatesCorrectFcfsResult() {
 
-        // Step 1: Create hard-coded processes.
         ArrayList<CpuProcess> processes = new ArrayList<>();
 
         processes.add(new CpuProcess("P1", 0, 5, 0));
         processes.add(new CpuProcess("P2", 1, 3, 0));
         processes.add(new CpuProcess("P3", 2, 2, 0));
 
-        // Step 2: Create the FCFS scheduler.
-        FcfsScheduler scheduler = new FcfsScheduler();
-
-        // Step 3: Run the scheduling algorithm.
         ScheduleResult result = scheduler.schedule(processes);
 
-        // Step 4: Find each calculated process.
         CpuProcess p1 = findProcess(result, "P1");
         CpuProcess p2 = findProcess(result, "P2");
         CpuProcess p3 = findProcess(result, "P3");
 
-        // Step 5: Check P1 calculations.
         assertEquals(0, p1.getStartTime());
         assertEquals(5, p1.getCompletionTime());
         assertEquals(5, p1.getTurnaroundTime());
         assertEquals(0, p1.getWaitingTime());
 
-        // Step 6: Check P2 calculations.
         assertEquals(5, p2.getStartTime());
         assertEquals(8, p2.getCompletionTime());
         assertEquals(7, p2.getTurnaroundTime());
         assertEquals(4, p2.getWaitingTime());
 
-        // Step 7: Check P3 calculations.
         assertEquals(8, p3.getStartTime());
         assertEquals(10, p3.getCompletionTime());
         assertEquals(8, p3.getTurnaroundTime());
         assertEquals(6, p3.getWaitingTime());
 
-        // Step 8: Check average values.
-        assertEquals(
-                10.0 / 3.0,
-                result.getAverageWaitingTime(),
-                0.001
-        );
+        assertEquals(10.0 / 3.0, result.getAverageWaitingTime(), 0.001);
+        assertEquals(20.0 / 3.0, result.getAverageTurnaroundTime(), 0.001);
 
-        assertEquals(
-                20.0 / 3.0,
-                result.getAverageTurnaroundTime(),
-                0.001
-        );
+        List<GanttBlock> blocks = result.getGanttBlocks();
+        assertEquals(3, blocks.size());
+        assertBlock(blocks.get(0), "P1", 0, 5);
+        assertBlock(blocks.get(1), "P2", 5, 8);
+        assertBlock(blocks.get(2), "P3", 8, 10);
+    }
 
-        // Step 9: Check the number of Gantt chart blocks.
-        assertEquals(3, result.getGanttBlocks().size());
+    @Test
+    public void schedule_addsIdleBlockBeforeFirstArrival() {
 
-        // Expected Gantt chart:
-        // P1: 0 to 5
-        // P2: 5 to 8
-        // P3: 8 to 10
+        ArrayList<CpuProcess> processes = new ArrayList<>();
+        processes.add(new CpuProcess("P1", 3, 2, 0));
 
-        assertEquals(
-                "P1",
-                result.getGanttBlocks().get(0).getProcessId()
-        );
+        ScheduleResult result = scheduler.schedule(processes);
 
-        assertEquals(
-                0,
-                result.getGanttBlocks().get(0).getStartTime()
-        );
+        List<GanttBlock> blocks = result.getGanttBlocks();
+        assertEquals(2, blocks.size());
+        assertBlock(blocks.get(0), "IDLE", 0, 3);
+        assertBlock(blocks.get(1), "P1", 3, 5);
 
-        assertEquals(
-                5,
-                result.getGanttBlocks().get(0).getEndTime()
-        );
+        CpuProcess p1 = findProcess(result, "P1");
+        assertEquals(3, p1.getStartTime());
+        assertEquals(5, p1.getCompletionTime());
+        assertEquals(2, p1.getTurnaroundTime());
+        assertEquals(0, p1.getWaitingTime());
+    }
 
-        assertEquals(
-                "P2",
-                result.getGanttBlocks().get(1).getProcessId()
-        );
+    @Test
+    public void schedule_singleProcess() {
 
-        assertEquals(
-                "P3",
-                result.getGanttBlocks().get(2).getProcessId()
+        ArrayList<CpuProcess> processes = new ArrayList<>();
+        processes.add(new CpuProcess("P1", 0, 4, 0));
+
+        ScheduleResult result = scheduler.schedule(processes);
+
+        CpuProcess p1 = findProcess(result, "P1");
+        assertEquals(0, p1.getStartTime());
+        assertEquals(4, p1.getCompletionTime());
+        assertEquals(4, p1.getTurnaroundTime());
+        assertEquals(0, p1.getWaitingTime());
+
+        List<GanttBlock> blocks = result.getGanttBlocks();
+        assertEquals(1, blocks.size());
+        assertBlock(blocks.get(0), "P1", 0, 4);
+    }
+
+    @Test
+    public void schedule_equalArrivalTimesPreserveInputOrder() {
+
+        ArrayList<CpuProcess> processes = new ArrayList<>();
+        processes.add(new CpuProcess("P1", 0, 5, 0));
+        processes.add(new CpuProcess("P2", 0, 3, 0));
+
+        ScheduleResult result = scheduler.schedule(processes);
+
+        List<GanttBlock> blocks = result.getGanttBlocks();
+        assertEquals(2, blocks.size());
+        assertBlock(blocks.get(0), "P1", 0, 5);
+        assertBlock(blocks.get(1), "P2", 5, 8);
+    }
+
+    @Test
+    public void schedule_rejectsNullProcessList() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> scheduler.schedule(null)
         );
     }
 
-    /**
-     * Searches the result list for a process with a particular ID.
-     */
+    @Test
+    public void schedule_rejectsEmptyProcessList() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> scheduler.schedule(new ArrayList<>())
+        );
+    }
+
+    @Test
+    public void schedule_doesNotModifyOriginalInput() {
+
+        ArrayList<CpuProcess> processes = new ArrayList<>();
+        processes.add(new CpuProcess("P1", 0, 5, 0));
+
+        CpuProcess original = processes.get(0);
+        int originalRemaining = original.getRemainingTime();
+
+        scheduler.schedule(processes);
+
+        assertEquals(-1, original.getStartTime());
+        assertEquals(originalRemaining, original.getRemainingTime());
+    }
+
+    private void assertBlock(
+            GanttBlock block,
+            String processId,
+            int startTime,
+            int endTime
+    ) {
+        assertEquals(processId, block.getProcessId());
+        assertEquals(startTime, block.getStartTime());
+        assertEquals(endTime, block.getEndTime());
+    }
+
     private CpuProcess findProcess(
             ScheduleResult result,
             String processId
     ) {
-        List<CpuProcess> calculatedProcesses =
-                result.getProcesses();
-
-        for (CpuProcess process : calculatedProcesses) {
-
+        for (CpuProcess process : result.getProcesses()) {
             if (processId.equals(process.getProcessId())) {
                 return process;
             }
         }
 
-        assertNotNull(
-                "Process " + processId + " was not found.",
-                null
-        );
-
+        fail("Process " + processId + " was not found.");
         return null;
     }
 }

@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String ALGORITHM_SJF = "SJF";
     public static final String ALGORITHM_PRIORITY = "PRIORITY";
     public static final String ALGORITHM_ROUND_ROBIN = "ROUND_ROBIN";
+    public static final String ALGORITHM_SRTF = "SRTF";
+    public static final String ALGORITHM_PREEMPTIVE_PRIORITY =
+            "PREEMPTIVE_PRIORITY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,12 @@ public class MainActivity extends AppCompatActivity {
         MaterialCardView cardRoundRobin =
                 findViewById(R.id.cardRoundRobin);
 
+        MaterialCardView cardSrtf =
+                findViewById(R.id.cardSrtf);
+
+        MaterialCardView cardPreemptivePriority =
+                findViewById(R.id.cardPreemptivePriority);
+
         cardFcfs.setOnClickListener(
                 view -> openProcessInput(ALGORITHM_FCFS)
         );
@@ -54,6 +63,14 @@ public class MainActivity extends AppCompatActivity {
 
         cardRoundRobin.setOnClickListener(
                 view -> openProcessInput(ALGORITHM_ROUND_ROBIN)
+        );
+
+        cardSrtf.setOnClickListener(
+                view -> openProcessInput(ALGORITHM_SRTF)
+        );
+
+        cardPreemptivePriority.setOnClickListener(
+                view -> openProcessInput(ALGORITHM_PREEMPTIVE_PRIORITY)
         );
     }
 

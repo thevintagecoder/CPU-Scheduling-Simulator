@@ -97,6 +97,9 @@ public class ResultActivity extends AppCompatActivity {
         boolean showPriority =
                 MainActivity.ALGORITHM_PRIORITY.equals(
                         selectedAlgorithm
+                )
+                || MainActivity.ALGORITHM_PREEMPTIVE_PRIORITY.equals(
+                        selectedAlgorithm
                 );
 
         displayResultTable(
@@ -472,8 +475,14 @@ public class ResultActivity extends AppCompatActivity {
             case MainActivity.ALGORITHM_SJF:
                 return "Shortest Job First";
 
+            case MainActivity.ALGORITHM_SRTF:
+                return "Shortest Remaining Time First";
+
             case MainActivity.ALGORITHM_PRIORITY:
                 return "Priority Scheduling";
+
+            case MainActivity.ALGORITHM_PREEMPTIVE_PRIORITY:
+                return "Preemptive Priority Scheduling";
 
             case MainActivity.ALGORITHM_ROUND_ROBIN:
                 return "Round Robin";

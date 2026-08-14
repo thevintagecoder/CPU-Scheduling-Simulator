@@ -18,28 +18,15 @@ public class RoundRobinSchedulerTest {
     @Test
     public void schedule_usesTimeQuantumAndReadyQueue() {
 
-        ArrayList<CpuProcess> processes =
-                new ArrayList<>();
-
-        processes.add(
-                new CpuProcess("P1", 0, 5, 0)
-        );
-
-        processes.add(
-                new CpuProcess("P2", 1, 3, 0)
-        );
-
-        processes.add(
-                new CpuProcess("P3", 2, 1, 0)
-        );
-
-        int timeQuantum = 2;
+        ArrayList<CpuProcess> processes = new ArrayList<>();
+        processes.add(new CpuProcess("P1", 0, 5, 0));
+        processes.add(new CpuProcess("P2", 1, 3, 0));
+        processes.add(new CpuProcess("P3", 2, 1, 0));
 
         RoundRobinScheduler scheduler =
-                new RoundRobinScheduler(timeQuantum);
+                new RoundRobinScheduler(2);
 
-        ScheduleResult result =
-                scheduler.schedule(processes);
+        ScheduleResult result = scheduler.schedule(processes);
 
         CpuProcess p1 = findProcess(result, "P1");
         CpuProcess p2 = findProcess(result, "P2");
@@ -60,70 +47,23 @@ public class RoundRobinSchedulerTest {
         assertEquals(3, p3.getTurnaroundTime());
         assertEquals(2, p3.getWaitingTime());
 
-        assertEquals(
-                10.0 / 3.0,
-                result.getAverageWaitingTime(),
-                0.001
-        );
+        assertEquals(10.0 / 3.0, result.getAverageWaitingTime(), 0.001);
+        assertEquals(19.0 / 3.0, result.getAverageTurnaroundTime(), 0.001);
 
-        assertEquals(
-                19.0 / 3.0,
-                result.getAverageTurnaroundTime(),
-                0.001
-        );
-
-        List<GanttBlock> blocks =
-                result.getGanttBlocks();
-
+        List<GanttBlock> blocks = result.getGanttBlocks();
         assertEquals(6, blocks.size());
-
-        assertEquals(
-                "P1",
-                blocks.get(0).getProcessId()
-        );
-
-        assertEquals(
-                "P2",
-                blocks.get(1).getProcessId()
-        );
-
-        assertEquals(
-                "P3",
-                blocks.get(2).getProcessId()
-        );
-
-        assertEquals(
-                "P1",
-                blocks.get(3).getProcessId()
-        );
-
-        assertEquals(
-                "P2",
-                blocks.get(4).getProcessId()
-        );
-
-        assertEquals(
-                "P1",
-                blocks.get(5).getProcessId()
-        );
-
-        /*
-         * Check the first time block.
-         */
-        assertEquals(
-                0,
-                blocks.get(0).getStartTime()
-        );
-
-        assertEquals(
-                2,
-                blocks.get(0).getEndTime()
-        );
+        assertEquals("P1", blocks.get(0).getProcessId());
+        assertEquals("P2", blocks.get(1).getProcessId());
+        assertEquals("P3", blocks.get(2).getProcessId());
+        assertEquals("P1", blocks.get(3).getProcessId());
+        assertEquals("P2", blocks.get(4).getProcessId());
+        assertEquals("P1", blocks.get(5).getProcessId());
+        assertEquals(0, blocks.get(0).getStartTime());
+        assertEquals(2, blocks.get(0).getEndTime());
     }
 
     @Test
     public void constructor_rejectsZeroQuantum() {
-
         assertThrows(
                 IllegalArgumentException.class,
                 () -> new RoundRobinScheduler(0)
@@ -133,56 +73,117 @@ public class RoundRobinSchedulerTest {
     @Test
     public void schedule_addsIdleBlockBeforeFirstArrival() {
 
-        ArrayList<CpuProcess> processes =
-                new ArrayList<>();
-
-        processes.add(
-                new CpuProcess("P1", 3, 2, 0)
-        );
+        ArrayList<CpuProcess> processes = new ArrayList<>();
+        processes.add(new CpuProcess("P1", 3, 2, 0));
 
         ScheduleResult result =
-                new RoundRobinScheduler(1)
-                        .schedule(processes);
+                new RoundRobinScheduler(1).schedule(processes);
 
-        List<GanttBlock> blocks =
-                result.getGanttBlocks();
+        List<GanttBlock> blocks = result.getGanttBlocks();
+        assertEquals(3, blocks.size());
+        assertBlock(blocks.get(0), "IDLE", 0, 3);
+        assertBlock(blocks.get(1), "P1", 3, 4);
+        assertBlock(blocks.get(2), "P1", 4, 5);
+    }
 
-        assertEquals(
-                "IDLE",
-                blocks.get(0).getProcessId()
+    @Test
+    public void schedule_singleProcess() {
+
+        ArrayList<CpuProcess> processes = new ArrayList<>();
+        processes.add(new CpuProcess("P1", 0, 4, 0));
+
+        ScheduleResult result =
+                new RoundRobinScheduler(2).schedule(processes);
+
+        CpuProcess p1 = findProcess(result, "P1");
+        assertEquals(0, p1.getStartTime());
+        assertEquals(4, p1.getCompletionTime());
+        assertEquals(4, p1.getTurnaroundTime());
+        assertEquals(0, p1.getWaitingTime());
+
+        List<GanttBlock> blocks = result.getGanttBlocks();
+        assertEquals(2, blocks.size());
+        assertBlock(blocks.get(0), "P1", 0, 2);
+        assertBlock(blocks.get(1), "P1", 2, 4);
+    }
+
+    @Test
+    public void schedule_quantumEqualsBurstTime() {
+
+        ArrayList<CpuProcess> processes = new ArrayList<>();
+        processes.add(new CpuProcess("P1", 0, 2, 0));
+        processes.add(new CpuProcess("P2", 0, 2, 0));
+
+        ScheduleResult result =
+                new RoundRobinScheduler(2).schedule(processes);
+
+        CpuProcess p1 = findProcess(result, "P1");
+        CpuProcess p2 = findProcess(result, "P2");
+
+        assertEquals(0, p1.getStartTime());
+        assertEquals(2, p1.getCompletionTime());
+        assertEquals(2, p2.getStartTime());
+        assertEquals(4, p2.getCompletionTime());
+
+        List<GanttBlock> blocks = result.getGanttBlocks();
+        assertEquals(2, blocks.size());
+        assertBlock(blocks.get(0), "P1", 0, 2);
+        assertBlock(blocks.get(1), "P2", 2, 4);
+    }
+
+    @Test
+    public void schedule_rejectsNullProcessList() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new RoundRobinScheduler(2).schedule(null)
         );
+    }
 
-        assertEquals(
-                0,
-                blocks.get(0).getStartTime()
+    @Test
+    public void schedule_rejectsEmptyProcessList() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new RoundRobinScheduler(2).schedule(new ArrayList<>())
         );
+    }
 
-        assertEquals(
-                3,
-                blocks.get(0).getEndTime()
-        );
+    @Test
+    public void schedule_doesNotModifyOriginalInput() {
+
+        ArrayList<CpuProcess> processes = new ArrayList<>();
+        processes.add(new CpuProcess("P1", 0, 3, 0));
+
+        CpuProcess original = processes.get(0);
+        int originalRemaining = original.getRemainingTime();
+
+        new RoundRobinScheduler(2).schedule(processes);
+
+        assertEquals(-1, original.getStartTime());
+        assertEquals(originalRemaining, original.getRemainingTime());
+    }
+
+    private void assertBlock(
+            GanttBlock block,
+            String processId,
+            int startTime,
+            int endTime
+    ) {
+        assertEquals(processId, block.getProcessId());
+        assertEquals(startTime, block.getStartTime());
+        assertEquals(endTime, block.getEndTime());
     }
 
     private CpuProcess findProcess(
             ScheduleResult result,
             String processId
     ) {
-        for (CpuProcess process
-                : result.getProcesses()) {
-
-            if (processId.equals(
-                    process.getProcessId()
-            )) {
+        for (CpuProcess process : result.getProcesses()) {
+            if (processId.equals(process.getProcessId())) {
                 return process;
             }
         }
 
-        fail(
-                "Process "
-                        + processId
-                        + " was not found."
-        );
-
+        fail("Process " + processId + " was not found.");
         return null;
     }
 }

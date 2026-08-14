@@ -188,6 +188,74 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- SRTF card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardSrtf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/card_background"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/border_color"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="18dp">
+
+                <TextView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:gravity="center"
+                    android:text="T"
+                    android:textColor="@color/process_5"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Shortest Remaining Time First"
+                        android:textColor="@color/text_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Preempts when a shorter job arrives."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="SRTF  •  Preemptive"
+                        android:textColor="@color/process_5"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Priority card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardPriority"
@@ -247,6 +315,74 @@
                         android:layout_marginTop="10dp"
                         android:text="PRIORITY  •  Non-preemptive"
                         android:textColor="@color/process_3"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Preemptive Priority card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardPreemptivePriority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/card_background"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/border_color"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="18dp">
+
+                <TextView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:gravity="center"
+                    android:text="PP"
+                    android:textColor="@color/process_6"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Preemptive Priority Scheduling"
+                        android:textColor="@color/text_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Preempts when a higher-priority process arrives."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="PRIORITY  •  Preemptive"
+                        android:textColor="@color/process_6"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 

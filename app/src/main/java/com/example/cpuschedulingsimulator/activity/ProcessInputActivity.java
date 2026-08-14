@@ -16,10 +16,12 @@ import com.example.cpuschedulingsimulator.R;
 import com.example.cpuschedulingsimulator.model.CpuProcess;
 import com.example.cpuschedulingsimulator.model.ScheduleResult;
 import com.example.cpuschedulingsimulator.scheduler.FcfsScheduler;
+import com.example.cpuschedulingsimulator.scheduler.PreemptivePriorityScheduler;
 import com.example.cpuschedulingsimulator.scheduler.PriorityScheduler;
 import com.example.cpuschedulingsimulator.scheduler.RoundRobinScheduler;
 import com.example.cpuschedulingsimulator.scheduler.Scheduler;
 import com.example.cpuschedulingsimulator.scheduler.SjfScheduler;
+import com.example.cpuschedulingsimulator.scheduler.SrtfScheduler;
 
 import java.util.ArrayList;
 
@@ -174,11 +176,9 @@ public class ProcessInputActivity extends AppCompatActivity {
             textProcessName.setText("P" + i);
 
             /*
-             * Only Priority Scheduling needs priority input.
+             * Priority-based algorithms need priority input.
              */
-            if (MainActivity.ALGORITHM_PRIORITY.equals(
-                    selectedAlgorithm
-            )) {
+            if (requiresPriorityInput()) {
                 priorityContainer.setVisibility(View.VISIBLE);
             } else {
                 priorityContainer.setVisibility(View.GONE);
@@ -225,8 +225,16 @@ public class ProcessInputActivity extends AppCompatActivity {
                 scheduler = new SjfScheduler();
                 break;
 
+            case MainActivity.ALGORITHM_SRTF:
+                scheduler = new SrtfScheduler();
+                break;
+
             case MainActivity.ALGORITHM_PRIORITY:
                 scheduler = new PriorityScheduler();
+                break;
+
+            case MainActivity.ALGORITHM_PREEMPTIVE_PRIORITY:
+                scheduler = new PreemptivePriorityScheduler();
                 break;
 
             case MainActivity.ALGORITHM_ROUND_ROBIN:
@@ -355,9 +363,7 @@ public class ProcessInputActivity extends AppCompatActivity {
 
             int priority = 0;
 
-            if (MainActivity.ALGORITHM_PRIORITY.equals(
-                    selectedAlgorithm
-            )) {
+            if (requiresPriorityInput()) {
 
                 Integer enteredPriority =
                         readPositiveInteger(
@@ -496,8 +502,14 @@ public class ProcessInputActivity extends AppCompatActivity {
             case MainActivity.ALGORITHM_SJF:
                 return "Shortest Job First";
 
+            case MainActivity.ALGORITHM_SRTF:
+                return "Shortest Remaining Time First";
+
             case MainActivity.ALGORITHM_PRIORITY:
                 return "Priority Scheduling";
+
+            case MainActivity.ALGORITHM_PREEMPTIVE_PRIORITY:
+                return "Preemptive Priority Scheduling";
 
             case MainActivity.ALGORITHM_ROUND_ROBIN:
                 return "Round Robin";
@@ -505,5 +517,12 @@ public class ProcessInputActivity extends AppCompatActivity {
             default:
                 return algorithm;
         }
+    }
+
+    private boolean requiresPriorityInput() {
+        return MainActivity.ALGORITHM_PRIORITY.equals(selectedAlgorithm)
+                || MainActivity.ALGORITHM_PREEMPTIVE_PRIORITY.equals(
+                        selectedAlgorithm
+                );
     }
 }
