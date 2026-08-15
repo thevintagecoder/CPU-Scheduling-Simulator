@@ -91,7 +91,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="6dp"
                 android:background="@color/input_background"
-                android:hint="1 is the highest priority"
+                android:hint="0 is the highest priority"
                 android:inputType="number"
                 android:maxLines="1"
                 android:paddingStart="14dp"

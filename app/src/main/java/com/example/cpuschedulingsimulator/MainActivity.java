@@ -5,13 +5,17 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cpuschedulingsimulator.activity.AlgorithmSelectionActivity;
 import com.example.cpuschedulingsimulator.activity.ProcessInputActivity;
 import com.google.android.material.card.MaterialCardView;
 
 /**
  * The first screen of the application.
  *
- * It allows the user to select a CPU scheduling algorithm.
+ * It allows the user to choose between Preemptive, Non-Preemptive,
+ * or Hybrid scheduling. Preemptive and Non-Preemptive lead to an
+ * algorithm-selection screen; Hybrid has no further choice and
+ * goes straight to process input.
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -23,42 +27,62 @@ public class MainActivity extends AppCompatActivity {
     public static final String ALGORITHM_PRIORITY = "PRIORITY";
     public static final String ALGORITHM_ROUND_ROBIN = "ROUND_ROBIN";
 
+    public static final String ALGORITHM_SJF_PREEMPTIVE = "SJF_PREEMPTIVE";
+    public static final String ALGORITHM_PRIORITY_PREEMPTIVE = "PRIORITY_PREEMPTIVE";
+
+    public static final String ALGORITHM_HYBRID = "HYBRID";
+
+    public static final String EXTRA_CATEGORY =
+            "com.example.cpuschedulingsimulator.EXTRA_CATEGORY";
+
+    public static final String CATEGORY_PREEMPTIVE = "PREEMPTIVE";
+    public static final String CATEGORY_NON_PREEMPTIVE = "NON_PREEMPTIVE";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MaterialCardView cardFcfs =
-                findViewById(R.id.cardFcfs);
+        MaterialCardView cardPreemptive =
+                findViewById(R.id.cardPreemptive);
 
-        MaterialCardView cardSjf =
-                findViewById(R.id.cardSjf);
+        MaterialCardView cardNonPreemptive =
+                findViewById(R.id.cardNonPreemptive);
 
-        MaterialCardView cardPriority =
-                findViewById(R.id.cardPriority);
+        MaterialCardView cardHybrid =
+                findViewById(R.id.cardHybrid);
 
-        MaterialCardView cardRoundRobin =
-                findViewById(R.id.cardRoundRobin);
-
-        cardFcfs.setOnClickListener(
-                view -> openProcessInput(ALGORITHM_FCFS)
+        cardPreemptive.setOnClickListener(
+                view -> openAlgorithmSelection(CATEGORY_PREEMPTIVE)
         );
 
-        cardSjf.setOnClickListener(
-                view -> openProcessInput(ALGORITHM_SJF)
+        cardNonPreemptive.setOnClickListener(
+                view -> openAlgorithmSelection(CATEGORY_NON_PREEMPTIVE)
         );
 
-        cardPriority.setOnClickListener(
-                view -> openProcessInput(ALGORITHM_PRIORITY)
-        );
-
-        cardRoundRobin.setOnClickListener(
-                view -> openProcessInput(ALGORITHM_ROUND_ROBIN)
+        cardHybrid.setOnClickListener(
+                view -> openProcessInput(ALGORITHM_HYBRID)
         );
     }
 
     /**
-     * Opens the process-input screen and sends the selected algorithm.
+     * Opens the algorithm-selection screen for the chosen category.
+     */
+    private void openAlgorithmSelection(String category) {
+
+        Intent intent = new Intent(
+                MainActivity.this,
+                AlgorithmSelectionActivity.class
+        );
+
+        intent.putExtra(EXTRA_CATEGORY, category);
+
+        startActivity(intent);
+    }
+
+    /**
+     * Opens the process-input screen directly, skipping algorithm
+     * selection. Used by Hybrid, which has no further choice.
      */
     private void openProcessInput(String algorithm) {
 

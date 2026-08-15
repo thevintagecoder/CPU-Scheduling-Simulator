@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:lineSpacingExtra="3dp"
-            android:text="Select an algorithm to enter process information and generate its scheduling result."
+            android:text="Select a scheduling type to see its available algorithms."
             android:textColor="@color/text_secondary"
             android:textSize="16sp" />
 
@@ -46,14 +46,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="Choose an algorithm"
+            android:text="Choose a scheduling type"
             android:textColor="@color/text_primary"
             android:textSize="19sp"
             android:textStyle="bold" />
 
-        <!-- FCFS card -->
+        <!-- Preemptive card -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardFcfs"
+            android:id="@+id/cardPreemptive"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -75,9 +75,9 @@
                 <TextView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:backgroundTint="@color/accent_cyan"
+                    android:backgroundTint="@color/process_4"
                     android:gravity="center"
-                    android:text="F"
+                    android:text="P"
                     android:textColor="@color/accent_text"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -92,7 +92,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="First Come First Served"
+                        android:text="Preemptive"
                         android:textColor="@color/text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -101,7 +101,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="Executes processes in arrival order."
+                        android:text="Algorithms that can interrupt a running process for a better one."
                         android:textColor="@color/text_secondary"
                         android:textSize="14sp" />
 
@@ -109,7 +109,76 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="FCFS  •  Non-preemptive"
+                        android:text="SJF  •  Priority  •  Round Robin"
+                        android:textColor="@color/process_4"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Non-Preemptive card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardNonPreemptive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/card_background"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/border_color"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="18dp">
+
+                <TextView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:backgroundTint="@color/accent_cyan"
+                    android:gravity="center"
+                    android:text="N"
+                    android:textColor="@color/accent_text"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Non-Preemptive"
+                        android:textColor="@color/text_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Algorithms that run a process to completion once started."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="FCFS  •  SJF  •  Priority"
                         android:textColor="@color/accent_cyan"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -120,9 +189,9 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- SJF card -->
+        <!-- Hybrid card -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardSjf"
+            android:id="@+id/cardHybrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -144,10 +213,11 @@
                 <TextView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+                    android:backgroundTint="@color/process_1"
                     android:gravity="center"
-                    android:text="S"
-                    android:textColor="@color/process_2"
-                    android:textSize="22sp"
+                    android:text="H"
+                    android:textColor="@color/accent_text"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -160,7 +230,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Shortest Job First"
+                        android:text="Hybrid"
                         android:textColor="@color/text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -169,7 +239,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="Selects the shortest available burst time."
+                        android:text="Combines SJF and Priority; each breaks the other's ties. Enter processes to see both results."
                         android:textColor="@color/text_secondary"
                         android:textSize="14sp" />
 
@@ -177,144 +247,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="SJF  •  Non-preemptive"
-                        android:textColor="@color/process_2"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Priority card -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardPriority"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/border_color"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="18dp">
-
-                <TextView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:gravity="center"
-                    android:text="P"
-                    android:textColor="@color/process_3"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Priority Scheduling"
-                        android:textColor="@color/text_primary"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="Runs the available process with the highest priority."
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="PRIORITY  •  Non-preemptive"
-                        android:textColor="@color/process_3"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Round Robin card -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardRoundRobin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/border_color"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="18dp">
-
-                <TextView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:gravity="center"
-                    android:text="R"
-                    android:textColor="@color/process_4"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Round Robin"
-                        android:textColor="@color/text_primary"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="Shares CPU time using a fixed time quantum."
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="RR  •  Preemptive"
-                        android:textColor="@color/process_4"
+                        android:text="SJF + PRIORITY  •  Preemptive"
+                        android:textColor="@color/process_1"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
