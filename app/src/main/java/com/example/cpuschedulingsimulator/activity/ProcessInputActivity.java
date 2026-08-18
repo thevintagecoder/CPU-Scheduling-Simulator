@@ -16,6 +16,10 @@ import com.example.cpuschedulingsimulator.R;
 import com.example.cpuschedulingsimulator.model.CpuProcess;
 import com.example.cpuschedulingsimulator.model.ScheduleResult;
 import com.example.cpuschedulingsimulator.scheduler.FcfsScheduler;
+import com.example.cpuschedulingsimulator.scheduler.HybridPriorityScheduler;
+import com.example.cpuschedulingsimulator.scheduler.HybridSjfScheduler;
+import com.example.cpuschedulingsimulator.scheduler.PreemptivePriorityScheduler;
+import com.example.cpuschedulingsimulator.scheduler.PreemptiveSjfScheduler;
 import com.example.cpuschedulingsimulator.scheduler.PriorityScheduler;
 import com.example.cpuschedulingsimulator.scheduler.RoundRobinScheduler;
 import com.example.cpuschedulingsimulator.scheduler.Scheduler;
@@ -36,6 +40,17 @@ public class ProcessInputActivity extends AppCompatActivity {
      */
     public static final String EXTRA_RESULT =
             "com.example.cpuschedulingsimulator.EXTRA_RESULT";
+
+    /**
+     * Intent keys used to send the two Hybrid results to
+     * ResultActivity (Hybrid has no single scheduler; both the
+     * SJF-primary and Priority-primary results are shown together).
+     */
+    public static final String EXTRA_RESULT_HYBRID_SJF =
+            "com.example.cpuschedulingsimulator.EXTRA_RESULT_HYBRID_SJF";
+
+    public static final String EXTRA_RESULT_HYBRID_PRIORITY =
+            "com.example.cpuschedulingsimulator.EXTRA_RESULT_HYBRID_PRIORITY";
 
     private String selectedAlgorithm;
 
@@ -174,11 +189,10 @@ public class ProcessInputActivity extends AppCompatActivity {
             textProcessName.setText("P" + i);
 
             /*
-             * Only Priority Scheduling needs priority input.
+             * Priority Scheduling and every algorithm that uses
+             * priority as a tie-breaker need priority input.
              */
-            if (MainActivity.ALGORITHM_PRIORITY.equals(
-                    selectedAlgorithm
-            )) {
+            if (requiresPriorityInput(selectedAlgorithm)) {
                 priorityContainer.setVisibility(View.VISIBLE);
             } else {
                 priorityContainer.setVisibility(View.GONE);
@@ -213,6 +227,11 @@ public class ProcessInputActivity extends AppCompatActivity {
             return;
         }
 
+        if (MainActivity.ALGORITHM_HYBRID.equals(selectedAlgorithm)) {
+            calculateHybridSchedule(processes);
+            return;
+        }
+
         Scheduler scheduler;
 
         switch (selectedAlgorithm) {
@@ -227,6 +246,14 @@ public class ProcessInputActivity extends AppCompatActivity {
 
             case MainActivity.ALGORITHM_PRIORITY:
                 scheduler = new PriorityScheduler();
+                break;
+
+            case MainActivity.ALGORITHM_SJF_PREEMPTIVE:
+                scheduler = new PreemptiveSjfScheduler();
+                break;
+
+            case MainActivity.ALGORITHM_PRIORITY_PREEMPTIVE:
+                scheduler = new PreemptivePriorityScheduler();
                 break;
 
             case MainActivity.ALGORITHM_ROUND_ROBIN:
@@ -302,6 +329,55 @@ public class ProcessInputActivity extends AppCompatActivity {
     }
 
     /**
+     * Hybrid has no single scheduler: it runs both the SJF-primary
+     * and the Priority-primary hybrid rules on the same processes
+     * and sends both results to ResultActivity.
+     */
+    private void calculateHybridSchedule(
+            ArrayList<CpuProcess> processes
+    ) {
+
+        try {
+
+            ScheduleResult hybridSjfResult =
+                    new HybridSjfScheduler().schedule(processes);
+
+            ScheduleResult hybridPriorityResult =
+                    new HybridPriorityScheduler().schedule(processes);
+
+            Intent intent = new Intent(
+                    ProcessInputActivity.this,
+                    ResultActivity.class
+            );
+
+            intent.putExtra(
+                    MainActivity.EXTRA_ALGORITHM,
+                    selectedAlgorithm
+            );
+
+            intent.putExtra(
+                    EXTRA_RESULT_HYBRID_SJF,
+                    hybridSjfResult
+            );
+
+            intent.putExtra(
+                    EXTRA_RESULT_HYBRID_PRIORITY,
+                    hybridPriorityResult
+            );
+
+            startActivity(intent);
+
+        } catch (IllegalArgumentException exception) {
+
+            Toast.makeText(
+                    this,
+                    exception.getMessage(),
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+    }
+
+    /**
      * Converts every visible input row into one CpuProcess object.
      */
     private ArrayList<CpuProcess> readProcessesFromRows() {
@@ -355,12 +431,10 @@ public class ProcessInputActivity extends AppCompatActivity {
 
             int priority = 0;
 
-            if (MainActivity.ALGORITHM_PRIORITY.equals(
-                    selectedAlgorithm
-            )) {
+            if (requiresPriorityInput(selectedAlgorithm)) {
 
                 Integer enteredPriority =
-                        readPositiveInteger(
+                        readNonNegativeInteger(
                                 editPriority,
                                 textProcessName.getText()
                                         + " priority"
@@ -384,6 +458,17 @@ public class ProcessInputActivity extends AppCompatActivity {
         }
 
         return processes;
+    }
+
+    /**
+     * True for every algorithm whose calculation depends on a
+     * priority value, either as the main rule or as a tie-breaker.
+     */
+    private boolean requiresPriorityInput(String algorithm) {
+
+        return MainActivity.ALGORITHM_PRIORITY.equals(algorithm)
+                || MainActivity.ALGORITHM_PRIORITY_PREEMPTIVE.equals(algorithm)
+                || MainActivity.ALGORITHM_HYBRID.equals(algorithm);
     }
 
     /**
@@ -501,6 +586,15 @@ public class ProcessInputActivity extends AppCompatActivity {
 
             case MainActivity.ALGORITHM_ROUND_ROBIN:
                 return "Round Robin";
+
+            case MainActivity.ALGORITHM_SJF_PREEMPTIVE:
+                return "Shortest Job First (Preemptive)";
+
+            case MainActivity.ALGORITHM_PRIORITY_PREEMPTIVE:
+                return "Priority Scheduling (Preemptive)";
+
+            case MainActivity.ALGORITHM_HYBRID:
+                return "Hybrid (SJF + Priority)";
 
             default:
                 return algorithm;
